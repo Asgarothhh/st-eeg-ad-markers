@@ -1,0 +1,37 @@
+{
+  "subject": 13,
+  "best_epoch": 23,
+  "train_acc": 0.7923976608187134,
+  "val_acc": 0.36036036036036034,
+  "val_f1": 0.35651563048823326,
+  "test_acc": 0.5650793650793651,
+  "test_f1": 0.49753377381824065,
+  "gap": {
+    "train_acc": 0.7923976608187134,
+    "val_acc": 0.36036036036036034,
+    "gap": 0.4320373004583531,
+    "overfit": true
+  },
+  "n_train": 342,
+  "n_val": 111,
+  "n_test": 315,
+  "seconds": 1190.186060667038,
+  "confusion": [
+    [
+      66,
+      11,
+      22
+    ],
+    [
+      76,
+      10,
+      22
+    ],
+    [
+      6,
+      0,
+      102
+    ]
+  ],
+  "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_13/best.pt"
+}

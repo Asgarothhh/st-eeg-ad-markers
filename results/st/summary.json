@@ -1,0 +1,565 @@
+{
+  "n_subjects": 15,
+  "acc_mean": 0.5987301587301588,
+  "acc_std": 0.14854293581079342,
+  "f1_mean": 0.5855445146003926,
+  "f1_std": 0.15770868066858723,
+  "val_mean": 0.6612612612612612,
+  "per_subject": [
+    {
+      "subject": 1,
+      "best_epoch": 18,
+      "train_acc": 0.8976608187134503,
+      "val_acc": 0.918918918918919,
+      "val_f1": 0.9149425287356322,
+      "test_acc": 0.6634920634920635,
+      "test_f1": 0.6473027915133178,
+      "gap": {
+        "train_acc": 0.8976608187134503,
+        "val_acc": 0.918918918918919,
+        "gap": -0.0212581002054687,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1131.26101064682,
+      "confusion": [
+        [
+          62,
+          16,
+          21
+        ],
+        [
+          31,
+          47,
+          30
+        ],
+        [
+          8,
+          0,
+          100
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_01/best.pt"
+    },
+    {
+      "subject": 2,
+      "best_epoch": 1,
+      "train_acc": 0.38011695906432746,
+      "val_acc": 0.34234234234234234,
+      "val_f1": 0.28272992829954857,
+      "test_acc": 0.35555555555555557,
+      "test_f1": 0.3136090807043466,
+      "gap": {
+        "train_acc": 0.38011695906432746,
+        "val_acc": 0.34234234234234234,
+        "gap": 0.03777461672198512,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 457.414999961853,
+      "confusion": [
+        [
+          7,
+          33,
+          59
+        ],
+        [
+          5,
+          40,
+          63
+        ],
+        [
+          21,
+          22,
+          65
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_02/best.pt"
+    },
+    {
+      "subject": 3,
+      "best_epoch": 19,
+      "train_acc": 0.9181286549707602,
+      "val_acc": 0.4954954954954955,
+      "val_f1": 0.32855436081242534,
+      "test_acc": 0.5428571428571428,
+      "test_f1": 0.5299121132866803,
+      "gap": {
+        "train_acc": 0.9181286549707602,
+        "val_acc": 0.4954954954954955,
+        "gap": 0.42263315947526475,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1082.9376854896545,
+      "confusion": [
+        [
+          30,
+          39,
+          30
+        ],
+        [
+          0,
+          76,
+          32
+        ],
+        [
+          0,
+          43,
+          65
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_03/best.pt"
+    },
+    {
+      "subject": 4,
+      "best_epoch": 6,
+      "train_acc": 0.6140350877192983,
+      "val_acc": 0.8018018018018018,
+      "val_f1": 0.5414370790894417,
+      "test_acc": 0.5079365079365079,
+      "test_f1": 0.48804280559443214,
+      "gap": {
+        "train_acc": 0.6140350877192983,
+        "val_acc": 0.8018018018018018,
+        "gap": -0.18776671408250356,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 616.7728826999664,
+      "confusion": [
+        [
+          27,
+          50,
+          22
+        ],
+        [
+          5,
+          58,
+          45
+        ],
+        [
+          26,
+          7,
+          75
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_04/best.pt"
+    },
+    {
+      "subject": 5,
+      "best_epoch": 7,
+      "train_acc": 0.6871345029239766,
+      "val_acc": 0.7387387387387387,
+      "val_f1": 0.5128106461439795,
+      "test_acc": 0.6698412698412698,
+      "test_f1": 0.6583396758280479,
+      "gap": {
+        "train_acc": 0.6871345029239766,
+        "val_acc": 0.7387387387387387,
+        "gap": -0.051604235814762145,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 680.0698661804199,
+      "confusion": [
+        [
+          51,
+          48,
+          0
+        ],
+        [
+          8,
+          59,
+          41
+        ],
+        [
+          7,
+          0,
+          101
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_05/best.pt"
+    },
+    {
+      "subject": 6,
+      "best_epoch": 8,
+      "train_acc": 0.6842105263157895,
+      "val_acc": 0.8558558558558559,
+      "val_f1": 0.6,
+      "test_acc": 0.6793650793650794,
+      "test_f1": 0.666295609152752,
+      "gap": {
+        "train_acc": 0.6842105263157895,
+        "val_acc": 0.8558558558558559,
+        "gap": -0.1716453295400664,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 682.6011536121368,
+      "confusion": [
+        [
+          81,
+          3,
+          15
+        ],
+        [
+          47,
+          43,
+          18
+        ],
+        [
+          18,
+          0,
+          90
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_06/best.pt"
+    },
+    {
+      "subject": 7,
+      "best_epoch": 4,
+      "train_acc": 0.6929824561403509,
+      "val_acc": 0.8378378378378378,
+      "val_f1": 0.6031468531468532,
+      "test_acc": 0.726984126984127,
+      "test_f1": 0.730669253947794,
+      "gap": {
+        "train_acc": 0.6929824561403509,
+        "val_acc": 0.8378378378378378,
+        "gap": -0.1448553816974869,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 539.9863278865814,
+      "confusion": [
+        [
+          96,
+          0,
+          3
+        ],
+        [
+          30,
+          78,
+          0
+        ],
+        [
+          53,
+          0,
+          55
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_07/best.pt"
+    },
+    {
+      "subject": 8,
+      "best_epoch": 8,
+      "train_acc": 0.8742690058479532,
+      "val_acc": 0.4594594594594595,
+      "val_f1": 0.3719298245614035,
+      "test_acc": 0.6,
+      "test_f1": 0.6120915938140271,
+      "gap": {
+        "train_acc": 0.8742690058479532,
+        "val_acc": 0.4594594594594595,
+        "gap": 0.4148095463884937,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 677.4886457920074,
+      "confusion": [
+        [
+          71,
+          5,
+          23
+        ],
+        [
+          43,
+          65,
+          0
+        ],
+        [
+          55,
+          0,
+          53
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_08/best.pt"
+    },
+    {
+      "subject": 9,
+      "best_epoch": 42,
+      "train_acc": 0.8070175438596491,
+      "val_acc": 0.5945945945945946,
+      "val_f1": 0.4278637770897833,
+      "test_acc": 0.6126984126984127,
+      "test_f1": 0.6073672409806031,
+      "gap": {
+        "train_acc": 0.8070175438596491,
+        "val_acc": 0.5945945945945946,
+        "gap": 0.21242294926505445,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1830.4446914196014,
+      "confusion": [
+        [
+          44,
+          45,
+          10
+        ],
+        [
+          18,
+          80,
+          10
+        ],
+        [
+          29,
+          10,
+          69
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_09/best.pt"
+    },
+    {
+      "subject": 10,
+      "best_epoch": 19,
+      "train_acc": 0.7192982456140351,
+      "val_acc": 0.45045045045045046,
+      "val_f1": 0.3727095516569201,
+      "test_acc": 0.43492063492063493,
+      "test_f1": 0.4027010234181702,
+      "gap": {
+        "train_acc": 0.7192982456140351,
+        "val_acc": 0.45045045045045046,
+        "gap": 0.26884779516358465,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1051.3374972343445,
+      "confusion": [
+        [
+          81,
+          18,
+          0
+        ],
+        [
+          71,
+          37,
+          0
+        ],
+        [
+          66,
+          23,
+          19
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_10/best.pt"
+    },
+    {
+      "subject": 11,
+      "best_epoch": 16,
+      "train_acc": 0.935672514619883,
+      "val_acc": 0.5945945945945946,
+      "val_f1": 0.3939016284479894,
+      "test_acc": 0.7142857142857143,
+      "test_f1": 0.7172579001692383,
+      "gap": {
+        "train_acc": 0.935672514619883,
+        "val_acc": 0.5945945945945946,
+        "gap": 0.34107792002528836,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 947.8821277618408,
+      "confusion": [
+        [
+          83,
+          12,
+          4
+        ],
+        [
+          27,
+          72,
+          9
+        ],
+        [
+          35,
+          3,
+          70
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_11/best.pt"
+    },
+    {
+      "subject": 12,
+      "best_epoch": 35,
+      "train_acc": 0.868421052631579,
+      "val_acc": 0.5855855855855856,
+      "val_f1": 0.4198966408268734,
+      "test_acc": 0.3111111111111111,
+      "test_f1": 0.316049321093912,
+      "gap": {
+        "train_acc": 0.868421052631579,
+        "val_acc": 0.5855855855855856,
+        "gap": 0.2828354670459934,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1592.339956521988,
+      "confusion": [
+        [
+          30,
+          21,
+          48
+        ],
+        [
+          31,
+          36,
+          41
+        ],
+        [
+          58,
+          18,
+          32
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_12/best.pt"
+    },
+    {
+      "subject": 13,
+      "best_epoch": 23,
+      "train_acc": 0.7923976608187134,
+      "val_acc": 0.36036036036036034,
+      "val_f1": 0.35651563048823326,
+      "test_acc": 0.5650793650793651,
+      "test_f1": 0.49753377381824065,
+      "gap": {
+        "train_acc": 0.7923976608187134,
+        "val_acc": 0.36036036036036034,
+        "gap": 0.4320373004583531,
+        "overfit": true
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 1190.186060667038,
+      "confusion": [
+        [
+          66,
+          11,
+          22
+        ],
+        [
+          76,
+          10,
+          22
+        ],
+        [
+          6,
+          0,
+          102
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_13/best.pt"
+    },
+    {
+      "subject": 14,
+      "best_epoch": 5,
+      "train_acc": 0.6140350877192983,
+      "val_acc": 0.8918918918918919,
+      "val_f1": 0.6083333333333333,
+      "test_acc": 0.765079365079365,
+      "test_f1": 0.7636804404756314,
+      "gap": {
+        "train_acc": 0.6140350877192983,
+        "val_acc": 0.8918918918918919,
+        "gap": -0.2778568041725936,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 576.5028188228607,
+      "confusion": [
+        [
+          76,
+          7,
+          16
+        ],
+        [
+          36,
+          72,
+          0
+        ],
+        [
+          3,
+          12,
+          93
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_14/best.pt"
+    },
+    {
+      "subject": 15,
+      "best_epoch": 9,
+      "train_acc": 0.8888888888888888,
+      "val_acc": 0.990990990990991,
+      "val_f1": 0.9907998342312474,
+      "test_acc": 0.8317460317460318,
+      "test_f1": 0.8323150952086946,
+      "gap": {
+        "train_acc": 0.8888888888888888,
+        "val_acc": 0.990990990990991,
+        "gap": -0.10210210210210213,
+        "overfit": false
+      },
+      "n_train": 342,
+      "n_val": 111,
+      "n_test": 315,
+      "seconds": 716.5713584423065,
+      "confusion": [
+        [
+          84,
+          0,
+          15
+        ],
+        [
+          21,
+          81,
+          6
+        ],
+        [
+          11,
+          0,
+          97
+        ]
+      ],
+      "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_15/best.pt"
+    }
+  ]
+}

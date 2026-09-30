@@ -4,8 +4,8 @@
 ключ `de_LDSk` имеет форму (62 канала, T секундных окон, 5 полос).
 Метки в `label.mat`: +1 / 0 / −1 (позитив / нейтрал / негатив).
 
-Протокол subject-dependent по Zheng, Lu (2015): ролики 1–9 — обучение,
-10–15 — тест. Ролики 8–9 из обучающей части откладываются в валидацию.
+Тест — ролики 10–15 (Zheng, Lu, 2015). Валидация — по одному ролику каждого
+класса из 1–9, обучение — остальные шесть.
 """
 
 from __future__ import annotations
@@ -71,18 +71,20 @@ def sliding_windows(de: np.ndarray, window_len: int, stride: int) -> np.ndarray:
 
 
 def _split_of_trial(trial_idx: int, cfg: Config) -> str:
-    val_end = cfg.n_train_trials + cfg.n_val_trials
-    if trial_idx < cfg.n_train_trials:
+    if trial_idx in cfg.train_trials:
         return "train"
-    if trial_idx < val_end:
+    if trial_idx in cfg.val_trials:
         return "val"
-    return "test"
+    if trial_idx in cfg.test_trials:
+        return "test"
+    raise ValueError(f"Ролик {trial_idx + 1} не входит ни в одну часть выборки")
 
 
 @dataclass
 class SubjectSplit:
     train_x: np.ndarray
     train_y: np.ndarray
+    train_trials: np.ndarray
     val_x: np.ndarray
     val_y: np.ndarray
     test_x: np.ndarray
@@ -105,19 +107,27 @@ def build_subject_split(
 
     buckets: dict[str, list[np.ndarray]] = {"train": [], "val": [], "test": []}
     y_buckets: dict[str, list[np.ndarray]] = {"train": [], "val": [], "test": []}
+    trial_buckets: dict[str, list[np.ndarray]] = {"train": [], "val": [], "test": []}
 
     for trials in sessions:
         for trial_idx, de in enumerate(trials):
             windows = sliding_windows(de, cfg.window_len, cfg.window_stride)
             if windows.size == 0:
                 continue
-            y = np.full((windows.shape[0],), class_ids[trial_idx], dtype=np.int64)
+            n_win = windows.shape[0]
+            y = np.full((n_win,), class_ids[trial_idx], dtype=np.int64)
             part = _split_of_trial(trial_idx, cfg)
             buckets[part].append(windows)
             y_buckets[part].append(y)
+            trial_buckets[part].append(np.full((n_win,), trial_idx, dtype=np.int64))
+
+    for part in ("train", "val", "test"):
+        if not buckets[part]:
+            raise RuntimeError(f"Пустая часть выборки «{part}» у субъекта {subject}")
 
     train_x = np.concatenate(buckets["train"], axis=0)
     train_y = np.concatenate(y_buckets["train"], axis=0)
+    train_trials = np.concatenate(trial_buckets["train"], axis=0)
     val_x = np.concatenate(buckets["val"], axis=0)
     val_y = np.concatenate(y_buckets["val"], axis=0)
     test_x = np.concatenate(buckets["test"], axis=0)
@@ -133,6 +143,7 @@ def build_subject_split(
     return SubjectSplit(
         train_x=train_x.astype(np.float32),
         train_y=train_y,
+        train_trials=train_trials,
         val_x=val_x.astype(np.float32),
         val_y=val_y,
         test_x=test_x.astype(np.float32),
@@ -145,21 +156,24 @@ def build_subject_split(
 
 
 class WindowDataset(Dataset):
-    def __init__(self, data: np.ndarray, labels: np.ndarray):
+    def __init__(self, data: np.ndarray, labels: np.ndarray, trials: np.ndarray | None = None):
         self.data = torch.from_numpy(data)
         self.labels = torch.from_numpy(labels)
+        self.trials = None if trials is None else torch.from_numpy(np.asarray(trials, dtype=np.int64))
 
     def __len__(self) -> int:
         return self.data.shape[0]
 
     def __getitem__(self, idx: int):
-        return self.data[idx], self.labels[idx]
+        if self.trials is None:
+            return self.data[idx], self.labels[idx]
+        return self.data[idx], self.labels[idx], self.trials[idx]
 
 
 def make_loaders(split: SubjectSplit, cfg: Config) -> tuple[DataLoader, DataLoader, DataLoader]:
-    def loader(x, y, shuffle: bool) -> DataLoader:
+    def loader(x, y, shuffle: bool, trials: np.ndarray | None = None) -> DataLoader:
         return DataLoader(
-            WindowDataset(x, y),
+            WindowDataset(x, y, trials),
             batch_size=cfg.batch_size,
             shuffle=shuffle,
             num_workers=cfg.num_workers,
@@ -167,7 +181,7 @@ def make_loaders(split: SubjectSplit, cfg: Config) -> tuple[DataLoader, DataLoad
         )
 
     return (
-        loader(split.train_x, split.train_y, True),
+        loader(split.train_x, split.train_y, True, split.train_trials),
         loader(split.val_x, split.val_y, False),
         loader(split.test_x, split.test_y, False),
     )

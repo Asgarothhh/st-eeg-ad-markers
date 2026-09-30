@@ -25,40 +25,58 @@ class Config:
     n_classes: int = 3
     n_subjects: int = 15
     n_trials: int = 15
-    # Канонический subject-dependent протокол: ролики 1–9 / 10–15.
-    # Из обучающих роликов 8 и 9 откладываются в валидацию,
-    # чтобы ранняя остановка не смотрела на тест.
-    n_train_trials: int = 7
-    n_val_trials: int = 2
+    # Тест — ролики 10–15, как в subject-dependent протоколе Zheng, Lu.
+    # Val — по одному фильму каждого класса из 1–9 (2=нейтрал, 3=негатив, 6=позитив).
+    # Обучение — оставшиеся шесть: 1, 4, 5, 7, 8, 9 (по два на класс).
+    # Индексы с нуля.
+    train_trials: tuple[int, ...] = (0, 3, 4, 6, 7, 8)
+    val_trials: tuple[int, ...] = (1, 2, 5)
+    test_trials: tuple[int, ...] = (9, 10, 11, 12, 13, 14)
 
     window_len: int = 60
-    window_stride: int = 10
+    window_stride: int = 30
     time_pool: int = 2
 
     emb_size: int = 40
     hid_channels: int = 40
     temporal_kernel: int = 3
-    num_heads: int = 8
+    num_heads: int = 4
     st_depth: int = 2
     ffn_expansion: int = 2
     dropout: float = 0.5
     ffn_dropout: float = 0.5
 
-    batch_size: int = 64
+    batch_size: int = 16
     epochs: int = 80
     lr: float = 2e-4
-    weight_decay: float = 1e-4
+    weight_decay: float = 1e-3
     label_smoothing: float = 0.05
     patience: int = 12
     seed: int = 2021
     num_workers: int = 0
     grad_clip: float = 1.0
+    mixup_alpha: float = 0.4
+    mask_channels: int = 8
+    mask_time: int = 12
 
     class_names: tuple[str, ...] = ("негатив", "нейтрал", "позитив")
     model_name: str = "st"
+    baseline_name: str = "linear"
+
+    def __post_init__(self) -> None:
+        assigned = [*self.train_trials, *self.val_trials, *self.test_trials]
+        if len(assigned) != len(set(assigned)):
+            raise ValueError("Ролики train / val / test пересекаются")
+        if sorted(assigned) != list(range(self.n_trials)):
+            raise ValueError("Все 15 роликов должны входить ровно в одну часть выборки")
 
     def model_dir(self) -> Path:
         path = self.results_dir / self.model_name
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def baseline_dir(self) -> Path:
+        path = self.results_dir / self.baseline_name
         path.mkdir(parents=True, exist_ok=True)
         return path
 

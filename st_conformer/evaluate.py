@@ -39,21 +39,22 @@ def metrics_dict(results: list[dict]) -> dict:
 
 def save_results_table(results_dir: Path, results: list[dict]) -> Path:
     results_dir.mkdir(parents=True, exist_ok=True)
-    lines = ["субъект,эпоха,обуч,вал,тест,F1,разрыв"]
+    lines = ["субъект,эпоха,обуч,вал,вал_F1,тест,F1,разрыв"]
     for row in sorted(results, key=lambda r: r["subject"]):
         gap = row.get("gap", {})
         gap_v = gap.get("gap", "") if isinstance(gap, dict) else ""
         epoch = row.get("best_epoch", "")
+        val_f1 = row.get("val_f1", float("nan"))
         lines.append(
             f"{row['subject']},{epoch},{row.get('train_acc', float('nan')):.6f},"
-            f"{row.get('val_acc', float('nan')):.6f},{row['test_acc']:.6f},"
+            f"{row.get('val_acc', float('nan')):.6f},{val_f1:.6f},{row['test_acc']:.6f},"
             f"{row['test_f1']:.6f},{gap_v}"
         )
     acc = np.array([r["test_acc"] for r in results])
     f1 = np.array([r["test_f1"] for r in results])
-    lines.append(f"среднее,,,,{acc.mean():.6f},{f1.mean():.6f},")
+    lines.append(f"среднее,,,,,{acc.mean():.6f},{f1.mean():.6f},")
     if len(acc) > 1:
-        lines.append(f"стд,,,,{acc.std(ddof=1):.6f},{f1.std(ddof=1):.6f},")
+        lines.append(f"стд,,,,,{acc.std(ddof=1):.6f},{f1.std(ddof=1):.6f},")
     path = results_dir / "summary.csv"
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
@@ -62,7 +63,8 @@ def save_results_table(results_dir: Path, results: list[dict]) -> Path:
 @torch.no_grad()
 def score_loader(model, loader, device):
     ys, ps = [], []
-    for x, y in loader:
+    for batch in loader:
+        x, y = batch[0], batch[1]
         x = x.to(device)
         logits = model(x)
         ys.append(y.numpy())
@@ -119,7 +121,7 @@ def evaluate_subject(cfg: Config, subject: int, device: torch.device) -> dict:
     write_json(out_dir / "eval.json", report)
     print(
         f"субъект {subject:02d}  обуч. {train_acc:.3f}  вал. {val_acc:.3f}  "
-        f"тест {test_acc:.3f}  разрыв {gap['gap']:.3f}"
+        f"вал.F1 {val_f1:.3f}  тест {test_acc:.3f}  разрыв {gap['gap']:.3f}"
         + ("  (большой разрыв)" if gap["overfit"] else "  (переобучения нет)")
     )
     return report

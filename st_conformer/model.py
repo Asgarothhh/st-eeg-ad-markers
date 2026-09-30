@@ -189,7 +189,7 @@ class STConformer(nn.Module):
         emb_size: int = 40,
         hid_channels: int = 40,
         temporal_kernel: int = 3,
-        num_heads: int = 8,
+        num_heads: int = 4,
         depth: int = 2,
         ffn_expansion: int = 2,
         dropout: float = 0.5,

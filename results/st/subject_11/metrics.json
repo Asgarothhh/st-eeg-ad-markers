@@ -1,36 +1,36 @@
 {
   "subject": 11,
-  "best_epoch": 16,
-  "train_acc": 0.935672514619883,
-  "val_acc": 0.5945945945945946,
-  "val_f1": 0.3939016284479894,
-  "test_acc": 0.7142857142857143,
-  "test_f1": 0.7172579001692383,
+  "best_epoch": 9,
+  "train_acc": 0.5925925925925926,
+  "val_acc": 0.75,
+  "val_f1": 0.7525857654889913,
+  "test_acc": 0.5523809523809524,
+  "test_f1": 0.5348318189064244,
   "gap": {
-    "train_acc": 0.935672514619883,
-    "val_acc": 0.5945945945945946,
-    "gap": 0.34107792002528836,
-    "overfit": true
+    "train_acc": 0.5925925925925926,
+    "val_acc": 0.75,
+    "gap": -0.15740740740740744,
+    "overfit": false
   },
-  "n_train": 342,
-  "n_val": 111,
-  "n_test": 315,
-  "seconds": 947.8821277618408,
+  "n_train": 108,
+  "n_val": 48,
+  "n_test": 105,
+  "seconds": 164.46994042396545,
   "confusion": [
     [
-      83,
+      10,
       12,
-      4
+      11
     ],
     [
-      27,
-      72,
-      9
+      7,
+      28,
+      1
     ],
     [
-      35,
-      3,
-      70
+      10,
+      6,
+      20
     ]
   ],
   "checkpoint": "/home/asgaroth/University/4 курс/Научная работа/st-eeg-ad-markers/results/st/subject_11/best.pt"

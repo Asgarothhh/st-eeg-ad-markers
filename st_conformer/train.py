@@ -1,4 +1,4 @@
-"""Обучение ST-Conformer на SEED: ранняя остановка по валидации."""
+"""Обучение ST-Conformer на SEED: ранняя остановка по val macro-F1."""
 
 from __future__ import annotations
 
@@ -10,11 +10,16 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
+from .augment import mask_channels_time, mixup_different_trials
 from .config import Config
 from .dataset import build_subject_split, make_loaders
 from .evaluate import metrics_dict, save_results_table, write_json
 from .plots import overfitting_gap, plot_confusion, plot_learning_curves
 from .utils import build_model, get_device, set_seed
+
+
+def _batch_xy(batch):
+    return batch[0], batch[1]
 
 
 @torch.no_grad()
@@ -24,7 +29,8 @@ def run_eval(model: nn.Module, loader, device: torch.device, criterion=None):
     all_pred = []
     total_loss = 0.0
     n_seen = 0
-    for x, y in loader:
+    for batch in loader:
+        x, y = _batch_xy(batch)
         x = x.to(device, non_blocking=True)
         y = y.to(device, non_blocking=True)
         logits = model(x)
@@ -48,7 +54,7 @@ def train_subject(cfg: Config, subject: int, device: torch.device) -> dict:
     train_loader, val_loader, test_loader = make_loaders(split, cfg)
 
     model = build_model(cfg).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
     criterion = nn.CrossEntropyLoss(label_smoothing=cfg.label_smoothing)
 
@@ -59,7 +65,7 @@ def train_subject(cfg: Config, subject: int, device: torch.device) -> dict:
         "epoch,train_loss,train_acc,val_loss,val_acc,val_f1,test_acc,test_f1,lr\n"
     )
 
-    best_val = -1.0
+    best_val_f1 = -1.0
     best_epoch = 0
     best_bundle = None
     patience_left = cfg.patience
@@ -70,25 +76,37 @@ def train_subject(cfg: Config, subject: int, device: torch.device) -> dict:
         running_loss = 0.0
         n_seen = 0
         n_correct = 0
-        for x, y in train_loader:
+        for batch in train_loader:
+            x, y = _batch_xy(batch)
+            trials = batch[2] if len(batch) > 2 else None
             x = x.to(device, non_blocking=True)
             y = y.to(device, non_blocking=True)
+            if trials is not None:
+                x, y_a, y_b, lam = mixup_different_trials(x, y, trials, cfg.mixup_alpha)
+            else:
+                y_a, y_b, lam = y, y, 1.0
+            x = mask_channels_time(x, cfg.mask_channels, cfg.mask_time)
             optimizer.zero_grad(set_to_none=True)
             logits = model(x)
-            loss = criterion(logits, y)
+            if lam >= 1.0 - 1e-6:
+                loss = criterion(logits, y_a)
+                target = y_a
+            else:
+                loss = lam * criterion(logits, y_a) + (1.0 - lam) * criterion(logits, y_b)
+                target = y_a if lam >= 0.5 else y_b
             loss.backward()
             if cfg.grad_clip > 0:
                 nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
             optimizer.step()
             running_loss += float(loss.item()) * y.size(0)
             n_seen += y.size(0)
-            n_correct += int((logits.argmax(1) == y).sum().item())
+            n_correct += int((logits.argmax(1) == target).sum().item())
 
         scheduler.step()
         train_acc = n_correct / max(n_seen, 1)
         train_loss = running_loss / max(n_seen, 1)
         val_acc, val_f1, val_loss, _, _ = run_eval(model, val_loader, device, criterion)
-        # Тест считается каждый раз только для журнала; чекпоинт выбирается по val.
+        # Тест только в журнал; чекпоинт выбирается по val macro-F1.
         test_acc, test_f1, _, y_true, y_pred = run_eval(model, test_loader, device, criterion)
         lr = optimizer.param_groups[0]["lr"]
         with log_path.open("a") as fh:
@@ -99,12 +117,12 @@ def train_subject(cfg: Config, subject: int, device: torch.device) -> dict:
         print(
             f"субъект {subject:02d}  эпоха {epoch:03d}  "
             f"loss {train_loss:.4f}  обуч. {train_acc:.3f}  "
-            f"вал. {val_acc:.3f}  тест {test_acc:.3f}",
+            f"вал.F1 {val_f1:.3f}  вал. {val_acc:.3f}  тест {test_acc:.3f}",
             flush=True,
         )
 
-        if val_acc > best_val + 1e-6:
-            best_val = val_acc
+        if val_f1 > best_val_f1 + 1e-6:
+            best_val_f1 = val_f1
             best_epoch = epoch
             gap = overfitting_gap(train_acc, val_acc)
             best_bundle = {
@@ -160,7 +178,7 @@ def train_subject(cfg: Config, subject: int, device: torch.device) -> dict:
     np.save(out_dir / "y_true.npy", y_true)
     np.save(out_dir / "y_pred.npy", y_pred)
     print(
-        f"субъект {subject:02d}: val={best_bundle['val_acc']:.4f}  "
+        f"субъект {subject:02d}: val F1={best_bundle['val_f1']:.4f}  "
         f"тест={best_bundle['test_acc']:.4f}  "
         f"разрыв обуч.–вал.={best_bundle['gap']['gap']:.3f}  "
         f"({elapsed / 60:.1f} мин)",
@@ -218,6 +236,7 @@ def main() -> None:
     device = torch.device(args.device) if args.device else get_device()
     print(
         f"устройство={device}  субъекты={subjects}  эпохи={cfg.epochs}  "
+        f"окно={cfg.window_len}/{cfg.window_stride}c  головы={cfg.num_heads}  "
         f"данные={cfg.features_dir}",
         flush=True,
     )
